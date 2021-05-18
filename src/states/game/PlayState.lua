@@ -18,20 +18,7 @@ function PlayState:init()
     self.gravityOn = true
     self.gravityAmount = 6
 
-    self.player = Player({
-        x = 0, y = 0,
-        width = 16, height = 20,
-        texture = 'green-alien',
-        stateMachine = StateMachine {
-            ['idle'] = function() return PlayerIdleState(self.player) end,
-            ['walking'] = function() return PlayerWalkingState(self.player) end,
-            ['jump'] = function() return PlayerJumpState(self.player, self.gravityAmount) end,
-            ['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
-        },
-        map = self.tileMap,
-        level = self.level
-    })
-
+    self:spawnPlayer()
     self:spawnEnemies()
 
     self.player:changeState('falling')
@@ -91,6 +78,56 @@ function PlayState:updateCamera()
     -- adjust background X to move a third the rate of the camera for parallax
     self.backgroundX = (self.camX / 3) % 256
 end
+
+
+function PlayState:spawnPlayer()
+
+    -- todo this is still spawning him over x1 if there is a gap
+
+    for x1 = 1, self.tileMap.width do
+      
+        -- flag for whether there's ground on this column of the level
+        local groundFound = false
+
+        for y1 = 1, self.tileMap.height do
+            if not groundFound then
+                
+                print("groundFound: ", groundFound, x1, y1)
+                if self.tileMap.tiles[y1][x1].id == TILE_ID_GROUND then
+                    groundFound = true
+                    print("groundFound: ", groundFound, x1, y1)
+
+                    -- player will drop from y=1 and x= the first column that has ground
+                    player_loc = math.min((x1 - 1) * TILE_SIZE)
+                    self.player = Player({
+                        x = player_loc, y = 1,
+                        width = 16, height = 20,
+                        texture = 'green-alien',
+                        stateMachine = StateMachine {
+                            ['idle'] = function() return PlayerIdleState(self.player) end,
+                            ['walking'] = function() return PlayerWalkingState(self.player) end,
+                            ['jump'] = function() return PlayerJumpState(self.player, self.gravityAmount) end,
+                            ['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
+                        },
+                        map = self.tileMap,
+                        level = self.level
+                    })
+                   return
+                end
+            end
+        end
+    end
+end
+
+
+
+
+
+
+
+
+
+
 
 --[[
     Adds a series of enemies to the level randomly.

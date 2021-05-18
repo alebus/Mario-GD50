@@ -13,6 +13,7 @@ Player = Class{__includes = Entity}
 function Player:init(def)
     Entity.init(self, def)
     self.score = 0
+    print("player init" , self.x, self.y)
 end
 
 function Player:update(dt)

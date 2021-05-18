@@ -22,6 +22,9 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 require 'src/Dependencies'
 
+-- debug
+love._openConsole()    
+
 function love.load()
     love.graphics.setFont(gFonts['medium'])
     love.window.setTitle('Super 50 Bros.')
