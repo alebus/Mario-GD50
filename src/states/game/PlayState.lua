@@ -82,8 +82,6 @@ end
 
 function PlayState:spawnPlayer()
 
-    -- todo this is still spawning him over x1 if there is a gap
-
     for x1 = 1, self.tileMap.width do
       
         -- flag for whether there's ground on this column of the level
