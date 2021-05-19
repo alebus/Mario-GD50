@@ -15,6 +15,9 @@ function LevelMaker.generate(width, height)
     local entities = {}
     local objects = {}
 
+    local keyGenerated = false
+    local lockGenerated = false
+
     local tileID = TILE_ID_GROUND
     
     -- whether we should draw our tiles with toppers
@@ -94,6 +97,66 @@ function LevelMaker.generate(width, height)
                     }
                 )
             end
+
+
+            -- chance to generate a key one time 
+            -- todo add other stuff as needed like flags for when unlocked etc
+            -- also not sure if these should be objects or entitites
+            -- see gem code for ideas and info in the assignment
+            if x > 4 and lockGenerated == false and math.random(15) == 7 then
+            
+                    lock = GameObject {
+                    texture = 'keys-locks',
+                    x = (x - 1) * TILE_SIZE,
+                    y = (blockHeight - 1) * TILE_SIZE,
+                    width = 16,
+                    height = 16,
+                    frame = math.random(5,8),
+                    collidable = true,
+                    consumable = true,
+                    solid = false,
+
+                    onConsume = function(player, object)
+                        gSounds['pickup']:play()
+                    end
+                }
+            print("lock added")
+            table.insert(objects, lock)
+            print_r ( lock )
+            lockGenerated = true
+            end
+
+            -- todo add code to make a lock and/or key at the end if we haven't done one yet
+    
+
+            -- chance to generate a lock one time 
+            -- todo add other stuff as needed like flags that the character got it etc
+            -- see gem code for ideas and info in the assignment
+            if x > 4 and keyGenerated == false and math.random(15) == 7 then 
+            
+                    key = GameObject {
+                    texture = 'keys-locks',
+                    x = (x - 1) * TILE_SIZE,
+                    y = (blockHeight - 1) * TILE_SIZE,
+                    width = 16,
+                    height = 16,
+                    frame = math.random(4),
+                    collidable = true,
+                    consumable = true,
+                    solid = false,
+
+                    onConsume = function(player, object)
+                        gSounds['pickup']:play()
+                    end
+                }
+
+            table.insert(objects, key)
+            print("key added")
+            print_r ( key )
+            keyGenerated = true
+            end
+
+
 
             -- chance to spawn a block
             if math.random(10) == 1 then
