@@ -70,6 +70,7 @@ function LevelMaker.generate(width, height)
                             y = (4 - 1) * TILE_SIZE,
                             width = 16,
                             height = 16,
+                            lock = false,
                             
                             -- select random frame from bush_ids whitelist, then random row for variance
                             frame = BUSH_IDS[math.random(#BUSH_IDS)] + (math.random(4) - 1) * 7,
@@ -93,6 +94,7 @@ function LevelMaker.generate(width, height)
                         width = 16,
                         height = 16,
                         frame = BUSH_IDS[math.random(#BUSH_IDS)] + (math.random(4) - 1) * 7,
+                        lock = false,
                         collidable = false
                     }
                 )
@@ -104,7 +106,11 @@ function LevelMaker.generate(width, height)
             -- also not sure if these should be objects or entitites
             -- see gem code for ideas and info in the assignment
             if x > 4 and lockGenerated == false and math.random(15) == 7 then
-            
+           
+                -- todo next -- I started doing this thing with hasKey but looking now, 
+                -- I think I need to change it to something with collide and make it non-consumable?
+                -- see notes in the assignment and see the code you implmented recently with the hasKey stuff etc
+
                     lock = GameObject {
                     texture = 'keys-locks',
                     x = (x - 1) * TILE_SIZE,
@@ -113,11 +119,24 @@ function LevelMaker.generate(width, height)
                     height = 16,
                     frame = math.random(5,8),
                     collidable = true,
-                    consumable = true,
-                    solid = false,
+                    consumable = false,
+                    solid = true,
+                    hit = false,
+                    lock = true,
 
-                    onConsume = function(player, object)
-                        gSounds['pickup']:play()
+                    -- if so this may break other stuffs
+                    onCollide = function(player, object)
+                        if player.hasKey then 
+                            gSounds['pickup']:play()
+                            print("player collided with lock -- has key")
+                            -- note the key is removed in JumpState when the collision happens, see there for why
+                            -- todo spawn flagpole, remove block etc
+
+
+                        else 
+                            gSounds['empty-block']:play()
+                            print("player collided with lock -- no key")
+                        end
                     end
                 }
             print("lock added")
@@ -144,9 +163,13 @@ function LevelMaker.generate(width, height)
                     collidable = true,
                     consumable = true,
                     solid = false,
+                    hit = false,
+                    lock = false,
 
                     onConsume = function(player, object)
                         gSounds['pickup']:play()
+                        player.hasKey = true
+                        print("player has key")
                     end
                 }
 
@@ -175,12 +198,13 @@ function LevelMaker.generate(width, height)
                         collidable = true,
                         hit = false,
                         solid = true,
+                        lock = false,
 
                         -- collision function takes itself
-                        onCollide = function(obj)
+                        onCollide = function(player, object)
 
                             -- spawn a gem if we haven't already hit the block
-                            if not obj.hit then
+                            if not object.hit then
 
                                 -- chance to spawn gem, not guaranteed
                                 if math.random(5) == 1 then
@@ -196,6 +220,7 @@ function LevelMaker.generate(width, height)
                                         collidable = true,
                                         consumable = true,
                                         solid = false,
+                                        lock = false,
 
                                         -- gem has its own function to add to the player's score
                                         onConsume = function(player, object)
@@ -213,7 +238,7 @@ function LevelMaker.generate(width, height)
                                     table.insert(objects, gem)
                                 end
 
-                                obj.hit = true
+                                object.hit = true
                             end
 
                             gSounds['empty-block']:play()

@@ -59,7 +59,17 @@ function PlayerJumpState:update(dt)
     for k, object in pairs(self.player.level.objects) do
         if object:collides(self.player) then
             if object.solid then
-                object.onCollide(object)
+                object.onCollide(self.player, object)
+
+                print("self.player.hasKey: ", self.player.hasKey)
+                print("object.lock: ", object.lock)
+
+                if self.player.hasKey and object.lock then
+                    table.remove(self.player.level.objects, k)
+                    -- key removed here so we can check above first
+                    self.player.hasKey = false
+                end
+
 
                 self.player.y = object.y + object.height
                 self.player.dy = 0
