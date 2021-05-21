@@ -102,15 +102,8 @@ function LevelMaker.generate(width, height)
 
 
             -- chance to generate a key one time 
-            -- todo add other stuff as needed like flags for when unlocked etc
-            -- also not sure if these should be objects or entitites
-            -- see gem code for ideas and info in the assignment
             if x > 4 and lockGenerated == false and math.random(15) == 7 then
            
-                -- todo next -- I started doing this thing with hasKey but looking now, 
-                -- I think I need to change it to something with collide and make it non-consumable?
-                -- see notes in the assignment and see the code you implmented recently with the hasKey stuff etc
-
                     lock = GameObject {
                     texture = 'keys-locks',
                     x = (x - 1) * TILE_SIZE,
@@ -124,13 +117,12 @@ function LevelMaker.generate(width, height)
                     hit = false,
                     lock = true,
 
-                    -- if so this may break other stuffs
                     onCollide = function(player, object)
                         if player.hasKey then 
                             gSounds['pickup']:play()
                             print("player collided with lock -- has key")
-                            -- note the key is removed in JumpState when the collision happens, see there for why
-                            -- todo spawn flagpole, remove block etc
+                            -- note the key is removed in JumpState when the collision happens, see there for info
+                            -- todo next spawn flagpole, remove block etc
 
 
                         else 
