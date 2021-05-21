@@ -122,7 +122,7 @@ function LevelMaker.generate(width, height)
                             gSounds['pickup']:play()
                             print("player collided with lock -- has key")
                             -- note the key is removed in JumpState when the collision happens, see there for info
-                            -- todo next spawn flagpole, remove block etc
+                            -- todo next spawn flagpole etc
 
 
                         else 
