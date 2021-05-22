@@ -133,27 +133,42 @@ function LevelMaker.generate(width, height)
 
                             flagpole[1] = GameObject {
                                 texture = 'flag-and-poles',
-                                x = TILE_SIZE, -- todo for now I am just making this near start to check it easily
-                                y = TILE_SIZE,                        
+                                x = player.x + 8 +32, -- debug todo for now I am just making this near start to check it easily
+                                y = TILE_SIZE + 8,                        
                                 width = 16,
-                                height = 16,
+                                height = 8,
                                 frame = 7,
                                 collidable = true,
                                 consumable = false,
                                 solid = true,
                                 hit = false,
-                                lock = false
+                                lock = false                           
                             
+                            }
+
+                            flagpole[2] = GameObject {
+                                texture = 'flag-and-poles',
+                                x = player.x + 32, -- debug todo for now I am just making this near start to check it easily
+                                y = TILE_SIZE,                        
+                                width = 16,
+                                height = 16,
+                                frame = 3,
+                                collidable = true,
+                                consumable = false,
+                                solid = true,
+                                hit = false,
+                                lock = false                           
                             
                             }
 
                             table.insert(objects, flagpole[1])
+                            table.insert(objects, flagpole[2])
 
                             for pole = 2, 6 do 
                             
-                                flagpole[pole] = GameObject {
+                                flagpole[pole + 1] = GameObject {
                                     texture = 'flag-and-poles',
-                                    x = TILE_SIZE, 
+                                    x = player.x + 32, -- debug todo temp for testing
                                     y = pole * TILE_SIZE,
                                     width = 16,
                                     height = 16,
@@ -168,7 +183,7 @@ function LevelMaker.generate(width, height)
                                     
                                 }
                                 print("loop", pole)
-                                table.insert(objects, flagpole[pole])
+                                table.insert(objects, flagpole[pole + 1])
                                 
                             end
 
