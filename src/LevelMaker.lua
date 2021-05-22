@@ -124,6 +124,56 @@ function LevelMaker.generate(width, height)
                             -- note the key is removed in JumpState when the collision happens, see there for info
                             -- todo next spawn flagpole etc
 
+                            -- todo I think sometimes the lock / key may spawn underneath a different block?
+                            -- quick fix would be don't spawn any blocks in first x and spawn lock there, similar with key
+
+                          
+                            flagpole = { }
+
+
+                            flagpole[1] = GameObject {
+                                texture = 'flag-and-poles',
+                                x = TILE_SIZE, -- todo for now I am just making this near start to check it easily
+                                y = TILE_SIZE,                        
+                                width = 16,
+                                height = 16,
+                                frame = 7,
+                                collidable = true,
+                                consumable = false,
+                                solid = true,
+                                hit = false,
+                                lock = false
+                            
+                            
+                            }
+
+                            table.insert(objects, flagpole[1])
+
+                            for pole = 2, 6 do 
+                            
+                                flagpole[pole] = GameObject {
+                                    texture = 'flag-and-poles',
+                                    x = TILE_SIZE, 
+                                    y = pole * TILE_SIZE,
+                                    width = 16,
+                                    height = 16,
+                                    frame = 12,
+                                    collidable = true,
+                                    consumable = false,
+                                    solid = true,
+                                    hit = false,
+                                    lock = false
+                                
+                                    -- todo add an onCollide and do stuff
+                                    
+                                }
+                                print("loop", pole)
+                                table.insert(objects, flagpole[pole])
+                                
+                            end
+
+                            print_r(flagpole)
+                            print_r(objects)
 
                         else 
                             gSounds['empty-block']:play()
