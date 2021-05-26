@@ -64,10 +64,18 @@ function PlayerJumpState:update(dt)
                 print("self.player.hasKey: ", self.player.hasKey)
                 print("object.lock: ", object.lock)
 
+                -- prob would be better to just check object.texture or do object.special = lock etc
                 if self.player.hasKey and object.lock then
                     table.remove(self.player.level.objects, k)
                     -- key removed here so we can check above first
                     self.player.hasKey = false
+                end
+
+                -- todo here is colliding with flag when jump
+                if object.texture == 'flag-and-poles' then
+
+                    print("collide with flagpole")
+
                 end
 
 

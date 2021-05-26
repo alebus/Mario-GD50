@@ -14,6 +14,11 @@ function Player:init(def)
     Entity.init(self, def)
     self.score = 0
     self.hasKey = false
+
+    if debug then 
+        self.hasKey = true
+    end
+
     print("player init" , self.x, self.y)
 end
 

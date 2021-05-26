@@ -25,6 +25,9 @@ require 'src/Dependencies'
 -- debug
 love._openConsole()    
 
+-- todo debug
+debug = true
+
 function love.load()
     love.graphics.setFont(gFonts['medium'])
     love.window.setTitle('Super 50 Bros.')
