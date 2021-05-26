@@ -10,6 +10,9 @@
     Some global constants for our application.
 ]]
 
+-- initial level width
+LEVEL_WIDTH = 100
+
 -- size of our actual window
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720

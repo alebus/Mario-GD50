@@ -10,6 +10,11 @@
 
 LevelMaker = Class{}
 
+
+
+
+
+
 function LevelMaker.generate(width, height)
     local tiles = {}
     local entities = {}
@@ -154,11 +159,15 @@ function LevelMaker.generate(width, height)
                                 hit = false,
                                 lock = false,
                                 
+                               
+
                                 onConsume = function(player, object)
                                     gSounds['pickup']:play()
                                     gSounds['powerup-reveal']:play()
                                     player.score = player.score + 500
+                                    gStateMachine:change('play')
                                 end
+                            
                             
                             }
 
@@ -175,13 +184,21 @@ function LevelMaker.generate(width, height)
                                 solid = false,
                                 hit = false,
                                 lock = false,
+
                                 
                                 onConsume = function(player, object)
                                     gSounds['pickup']:play()
                                     gSounds['powerup-reveal']:play()
                                     player.score = player.score + 500
+
+                                    player.x = player.x - PLAYER_WALK_SPEED
+                                    player:changeState('falling')
+
+
+                                    gStateMachine:change('play')
                                 end
-                            
+                                
+                              
                             }
 
                             table.insert(objects, flagpole[1])
@@ -206,7 +223,14 @@ function LevelMaker.generate(width, height)
                                         gSounds['pickup']:play()
                                         gSounds['powerup-reveal']:play()
                                         player.score = player.score + 500
+                                        
+                                        player.x = player.x - PLAYER_WALK_SPEED
+                                        player:changeState('falling')
+
+                                        gStateMachine:change('play')
                                     end
+                                
+
                                 
                                     
                                 }
@@ -233,6 +257,12 @@ function LevelMaker.generate(width, height)
                                     gSounds['pickup']:play()
                                     gSounds['powerup-reveal']:play()
                                     player.score = player.score + 500
+
+                                    player.x = player.x - PLAYER_WALK_SPEED
+                                    player:changeState('falling')
+
+
+                                    gStateMachine:change('start')
                                 end
                             
                             }
