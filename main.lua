@@ -26,7 +26,7 @@ require 'src/Dependencies'
 love._openConsole()    
 
 -- todo debug
-debug = true
+debug = false
 
 function love.load()
     love.graphics.setFont(gFonts['medium'])

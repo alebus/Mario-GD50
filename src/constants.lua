@@ -11,7 +11,7 @@
 ]]
 
 -- initial level width
-LEVEL_WIDTH = 100
+LEVEL_WIDTH = 50
 
 -- size of our actual window
 WINDOW_WIDTH = 1280

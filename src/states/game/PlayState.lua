@@ -8,9 +8,28 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
+    
+    print("playstate init")
     self.camX = 0
     self.camY = 0
-    self.level = LevelMaker.generate(LEVEL_WIDTH, 10) 
+   
+    self.width = LEVEL_WIDTH
+
+end
+
+
+
+function PlayState:enter(params)
+    
+    print("playstate enter")
+
+
+    self.width = params.width
+    self.score = params.score
+    
+    print("level width: ", self.width)
+
+    self.level = LevelMaker.generate(self.width, 10) 
     self.tileMap = self.level.tileMap
     self.background = math.random(3)
     self.backgroundX = 0
@@ -22,7 +41,18 @@ function PlayState:init()
     self:spawnEnemies()
 
     self.player:changeState('falling')
+    
+    self.player.score = self.score
+
+    
+
+
 end
+
+
+
+
+
 
 function PlayState:update(dt)
     Timer.update(dt)
@@ -77,6 +107,11 @@ function PlayState:updateCamera()
 
     -- adjust background X to move a third the rate of the camera for parallax
     self.backgroundX = (self.camX / 3) % 256
+
+
+    -- debug
+    -- print("player x, y:", self.player.x, self.player.y)
+
 end
 
 

@@ -15,7 +15,7 @@ LevelMaker = Class{}
 
 
 
-function LevelMaker.generate(width, height)
+function LevelMaker.generate(level_width, level_height)
     local tiles = {}
     local entities = {}
     local objects = {}
@@ -31,12 +31,12 @@ function LevelMaker.generate(width, height)
     local topperset = math.random(20)
 
     -- insert blank tables into tiles for later access
-    for x = 1, height do
+    for x = 1, level_height do
         table.insert(tiles, {})
     end
 
     -- column by column generation instead of row; sometimes better for platformers
-    for x = 1, width do
+    for x = 1, level_width do
         local tileID = TILE_ID_EMPTY
         
         -- lay out the empty space
@@ -47,7 +47,7 @@ function LevelMaker.generate(width, height)
 
         -- chance to just be emptiness
         if math.random(7) == 1 then
-            for y = 7, height do
+            for y = 7, level_height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
             end
@@ -57,7 +57,7 @@ function LevelMaker.generate(width, height)
             -- height at which we would spawn a potential jump block
             local blockHeight = 4
 
-            for y = 7, height do
+            for y = 7, level_height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, y == 7 and topper or nil, tileset, topperset))
             end
@@ -127,28 +127,18 @@ function LevelMaker.generate(width, height)
                             gSounds['pickup']:play()
                             print("player collided with lock -- has key")
                             -- note the key is removed in JumpState when the collision happens, see there for info
-                            -- todo next - there are multiple
-                            -- todo next see the hints at end, don't use collide but make the flagpole consumable I think
-                            -- messing with all the collision code so player could bump from side was def getting complicated so yeah try consume instead
-
-                            -- todo next make it easier to debug like spawn flagpole every time, just make it easy to reset like a debug = true setting or something
                             
-                            -- * I am adding some stuff around debug = true so turn that off later etc
-                            -- right now the player starts with hasKey = true
-
-                            -- todo make a normal empty space 2 blocks from the end and use that for the flagpole
-
+                            
                             -- todo I think sometimes the lock / key may spawn underneath a different block?
                             -- quick fix would be don't spawn any blocks in first x and spawn lock there, similar with key
 
                           
                             flagpole = { }
 
-
+                            -- this is the flag itself
                             flagpole[1] = GameObject {
                                 texture = 'flag-and-poles',
-                                x = player.x + 8 +32, -- debug todo for now I am just making this near start to check it easily - later make it 2 blocks from end
-                                --x = width - (2*TILE_SIZE),
+                                x = (level_width*TILE_SIZE) - (1.5*TILE_SIZE), -- shifted from the rest of the flagpole
                                 y = TILE_SIZE + 8,                        
                                 width = 16,
                                 height = 8,
@@ -164,8 +154,16 @@ function LevelMaker.generate(width, height)
                                 onConsume = function(player, object)
                                     gSounds['pickup']:play()
                                     gSounds['powerup-reveal']:play()
-                                    player.score = player.score + 500
-                                    gStateMachine:change('play')
+                                    --player.score = player.score + 500
+
+                                    player.x = player.x - PLAYER_WALK_SPEED
+                                    player:changeState('falling')
+
+
+                                    gStateMachine:change('play', {
+                                        width = level_width + 20 ,
+                                        score = player.score
+                                    })
                                 end
                             
                             
@@ -173,8 +171,7 @@ function LevelMaker.generate(width, height)
 
                             flagpole[2] = GameObject {
                                 texture = 'flag-and-poles',
-                                x = player.x + 32, -- debug todo for now I am just making this near player to check it easily - later make it 2 blocks from end
-                                -- x = width - (2*TILE_SIZE),
+                                x = (level_width*TILE_SIZE) - (2 * TILE_SIZE),
                                 y = TILE_SIZE,                        
                                 width = 16,
                                 height = 16,
@@ -189,13 +186,16 @@ function LevelMaker.generate(width, height)
                                 onConsume = function(player, object)
                                     gSounds['pickup']:play()
                                     gSounds['powerup-reveal']:play()
-                                    player.score = player.score + 500
+                                    --player.score = player.score + 500
 
                                     player.x = player.x - PLAYER_WALK_SPEED
                                     player:changeState('falling')
 
 
-                                    gStateMachine:change('play')
+                                    gStateMachine:change('play', {
+                                        width = level_width + 20 ,
+                                        score = player.score
+                                    })
                                 end
                                 
                               
@@ -203,12 +203,13 @@ function LevelMaker.generate(width, height)
 
                             table.insert(objects, flagpole[1])
                             table.insert(objects, flagpole[2])
-
+                            
+                            -- the main part of the pole
                             for pole = 2, 4 do 
                             
                                 flagpole[pole + 1] = GameObject {
                                     texture = 'flag-and-poles',
-                                    x = player.x + 32, -- debug todo temp for testing
+                                    x = (level_width*TILE_SIZE) - (2 * TILE_SIZE),
                                     y = pole * TILE_SIZE,
                                     width = 16,
                                     height = 16,
@@ -222,27 +223,32 @@ function LevelMaker.generate(width, height)
                                     onConsume = function(player, object)
                                         gSounds['pickup']:play()
                                         gSounds['powerup-reveal']:play()
-                                        player.score = player.score + 500
-                                        
+                                        --player.score = player.score + 500
+    
                                         player.x = player.x - PLAYER_WALK_SPEED
                                         player:changeState('falling')
-
-                                        gStateMachine:change('play')
+    
+    
+                                        gStateMachine:change('play', {
+                                            width = level_width + 20 ,
+                                            score = player.score
+                                        })
                                     end
-                                
 
                                 
                                     
                                 }
                                 print("loop", pole)
+                                print("pole x,y: ", x, y)
+                                print("level width: ", level_width)
+                                print("player x,y: ", player.x, player.y)
                                 table.insert(objects, flagpole[pole + 1])
                             end
 
-
+                            -- the base
                             flagpole[7] = GameObject {
                                 texture = 'flag-and-poles',
-                                x = player.x + 32, -- debug todo for now I am just making this near player to check it easily - later make it 2 blocks from end
-                                -- x = width - (2*TILE_SIZE),
+                                x = (level_width*TILE_SIZE) - (2 * TILE_SIZE),
                                 y = TILE_SIZE * 5,                        
                                 width = 16,
                                 height = 16,
@@ -256,23 +262,26 @@ function LevelMaker.generate(width, height)
                                 onConsume = function(player, object)
                                     gSounds['pickup']:play()
                                     gSounds['powerup-reveal']:play()
-                                    player.score = player.score + 500
+                                    --player.score = player.score + 500
 
                                     player.x = player.x - PLAYER_WALK_SPEED
                                     player:changeState('falling')
 
 
-                                    gStateMachine:change('start')
+                                    gStateMachine:change('play', {
+                                        width = level_width + 20 ,
+                                        score = player.score
+                                    })
                                 end
                             
                             }
-                            print ("pole2:", pole2)
+                            print ("pole2: ", pole2)
                             table.insert(objects, flagpole[7])
 
 
-
+                            -- debug
                             print_r(flagpole)
-                            print_r(objects)
+                            -- print_r(objects)
 
                         else 
                             gSounds['empty-block']:play()
@@ -282,7 +291,9 @@ function LevelMaker.generate(width, height)
                 }
             print("lock added")
             table.insert(objects, lock)
-            print_r ( lock )
+            
+            -- debug
+            --print_r ( lock )
             lockGenerated = true
             end
 
@@ -313,7 +324,9 @@ function LevelMaker.generate(width, height)
 
             table.insert(objects, key)
             print("key added")
-            print_r ( key )
+            
+            -- debug
+            --print_r ( key )
             keyGenerated = true
             end
 
@@ -387,16 +400,16 @@ function LevelMaker.generate(width, height)
         end
     end
 
-    -- todo here make a small normal space for the flagpole to go later
-    x = width - (2*TILE_SIZE)
-    -- todo next 2 need to update / fix this to generate normal ground
-    for y = 7, height do
+    -- here we make a small normal space for the flagpole to go later
+    x = (level_width*TILE_SIZE) - (2 * TILE_SIZE)
+        
+    for y = 7, level_height do
         table.insert(tiles[y],
             Tile(x, y, tileID, y == 7 and topper or nil, tileset, topperset))
     end
+    
 
-
-    local map = TileMap(width, height)
+    local map = TileMap(level_width, level_height)
     map.tiles = tiles
     
     return GameLevel(entities, objects, map)

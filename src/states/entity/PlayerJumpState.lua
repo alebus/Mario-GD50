@@ -9,6 +9,7 @@
 PlayerJumpState = Class{__includes = BaseState}
 
 function PlayerJumpState:init(player, gravity)
+    --print("player jump state init")
     self.player = player
     self.gravity = gravity
     self.animation = Animation {
@@ -19,6 +20,8 @@ function PlayerJumpState:init(player, gravity)
 end
 
 function PlayerJumpState:enter(params)
+    --print("player jump state enter")
+
     gSounds['jump']:play()
     self.player.dy = PLAYER_JUMP_VELOCITY
 end
@@ -71,13 +74,7 @@ function PlayerJumpState:update(dt)
                     self.player.hasKey = false
                 end
 
-                -- todo here is colliding with flag when jump
-                if object.texture == 'flag-and-poles' then
-
-                    print("collide with flagpole")
-
-                end
-
+                
 
                 self.player.y = object.y + object.height
                 self.player.dy = 0
